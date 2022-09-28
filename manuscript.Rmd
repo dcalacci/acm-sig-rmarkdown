@@ -1,0 +1,186 @@
+---
+title: "ACM Formatted RMarkdown Template for Camera-Ready Submission"
+short-authors: Author 1 \& Author 2
+short-title: Short Paper Title
+subtitle: Best subtitle
+subtitlenote: null
+keywords: keyword1, keyword2, keyword3
+
+abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+
+acknowledgements: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+
+author:
+- affiliation:
+    city: Cambridge
+    country: USA
+    institution: MIT
+    postcode: "02139"
+    state: MA
+  email: authorone\@mit.edu
+  name: Author One
+- affiliation:
+    city: Cambridge
+    country: USA
+    institution: MIT
+    postcode: "02139"
+    state: MA
+  email: authortwo\@mit.edu
+  name: Author Two
+
+## Rights info for ACM
+############################
+acm-copyright-image-path: figs/cc-by-sa4acm.png
+acm-copyright: rightsretained
+acm-journal: PACMHCI
+acm-year: 2022
+acm-volume: 1
+acm-number: ACM1
+acm-article: 111
+acm-month: 12
+acm-price: null
+acm-doi: 10.0000/5555555
+acm-received: Date Received
+acm-revised: Date Revised
+acm-accepted: Date Accepted
+#############################
+
+
+
+## Rendering parameters
+# true if submitting for camera ready; Fill out rights info above.
+camera-ready: false
+# true if blind review
+anonymous: false 
+# true if review copy
+review: true
+# true if generating for your own distribution
+authorversion: yes
+# whether to include a watermark only on the front page
+watermark-on-first-page-only: yes
+# path to .bib file
+bibliography-path: "latex/bibliography.bib"
+# whether to remove the header
+remove-header: no
+
+## output
+output:
+  pdf_document:
+    template: "latex/acm_template.tex"
+    citation_package: natbib
+    # I commonly use these, you can remove what you'd like.
+    extra_dependencies: ["lscape", "pdflscape", "booktabs"]
+    keep_tex: yes
+
+# I prefer sentence wrapping in saved Rmd
+editor_options:
+  markdown:
+    wrap: sentence
+---
+
+```{r setup, include=F, echo=F}
+library(tidyverse)
+library(targets)
+library(here)
+library(ggpubr)
+library(patchwork)  
+library(kableExtra)
+library(lubridate)
+here <- here::here
+
+# do not show warnings or messages
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+# adjust this to adjust where the Rmd is knit from
+knitr::opts_knit$set(root.dir = here::here())
+# adjusts how NAs are shown in kable tables
+knitr::opts_knit$set(knitr.kable.NA = '')
+
+# comment this line to keep tex files on build
+options(tinytex.clean=TRUE)
+```
+
+```{r load_pkgs, message=FALSE, warning=FALSE, include=FALSE}
+# Packages for rendering. I recommend either using renv or just adding
+# packages you use here. 
+pkg <- c("pander", "tidyverse", "knitr", "bookdown", "formattable", "reshape2", "kableExtra")
+# Check if packages are not installed and assign the
+# names of the packages not installed to the variable new.pkg
+new.pkg <- pkg[!(pkg %in% installed.packages())]
+# If there are any packages in the list that aren't installed,
+# install them
+if (length(new.pkg))
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+```
+
+```{r setup_output, include=FALSE}
+
+# some additional output options in chunks
+
+library(knitr)
+# create additional chunk options
+hook_chunk = knit_hooks$get('chunk')
+knit_hooks$set(chunk = function(x, options) {
+  txt = hook_chunk(x, options)
+  # add chunk option 'vspaceout' to position chunks vertically with \vspace
+  if (!is.null(options$vspaceout)) {
+    latex_vspace <- paste0("\\1\\\\vspace\\{", options$vspaceout, "\\}")
+    txt <- sub('(\\\\begin[^}]+})', latex_vspace, txt)  
+  }
+  # add chunk option 'description' which adds \Description{...} to figures
+  if (!is.null(options$description)) {
+    latex_include <- paste0("\\1\\\\Description\\{", options$description, "\\}")
+    gsub('(\\\\includegraphics[^}]+})', latex_include, txt)
+  } else {
+    return(txt)  # pass to default hook
+  }
+})
+
+```
+
+```{r load-and-process-data, echo=F, message=FALSE, warning=FALSE, include=T}
+# start your code here!
+```
+
+# Introduction
+
+Introduction goes here, and can cite [@targets] correctly.
+
+## Contributions
+
+Contributions - go - here
+
+# Background
+
+Background goes here
+
+```{r pay-screenshot, include=T, echo=FALSE,out.width="100%",fig.show='hold', fig.align='center', fig.cap="One easy way of presenting multiple illustrations side by side is to use a pattern of knitr with here."}
+knitr::include_graphics(c("figs/fig1.pdf"))
+```
+
+```{r commandTable, echo=FALSE, warning=FALSE, fig.cap="Example table"}
+library(kableExtra)
+my.data <- "
+  Command | Description                                  | Example Response
+  
+  METRO | Compare pay to workers in same metro area      | Shoppers in your area generally make about 15.20 for every shop, and earn about 423 per week.
+  
+  PAY   | Pay and algorithm information      |   On average, you get paid 16.99 per shop from Shipt, excluding tips. Shipt used the new payment algorithm in 13 out of the 26 shops you sent us. If Shipt never changed their algorithm, you would have been paid 17.87 per shop instead, and 10.77 more in total. 
+  
+  TIPS  | Average tip and percentage of total pay in tips     |    On average, you make 4.37 in tips on each shop. That's 25 percent of your total pay!"
+
+tabledf <- read.delim(textConnection(my.data),header=FALSE,sep="|",strip.white=TRUE,stringsAsFactors=FALSE)
+names(tabledf) <- unname(as.list(tabledf[1,])) # put headers on
+tabledf <- tabledf[-1,] # remove first row
+row.names(tabledf)<-NULL
+knitr::kable(tabledf, 
+             caption="Shipt Calculator commands available to workers.", booktabs=T) %>%
+  column_spec(c(1), width = "2cm") %>%
+  column_spec(c(2), width="4cm") %>%
+  column_spec(3, width="6cm")
+```
+
+# Conclusion
+
+Conclusion goes here
+
+------------------------------------------------------------------------
