@@ -30,6 +30,7 @@ author:
 
 ## Rights info for ACM
 ############################
+# set to empty to use non-CC copyright
 acm-copyright-image-path: figs/cc-by-sa4acm.png
 acm-copyright: rightsretained
 acm-journal: PACMHCI
@@ -49,13 +50,13 @@ acm-accepted: Date Accepted
 
 ## Rendering parameters
 # true if submitting for camera ready; Fill out rights info above.
-camera-ready: false
+camera-ready: true
 # true if blind review
-anonymous: false 
+anonymous: false
 # true if review copy
-review: true
+review: false
 # true if generating for your own distribution
-authorversion: yes
+authorversion: no
 # whether to include a watermark only on the front page
 watermark-on-first-page-only: yes
 # path to .bib file
@@ -184,3 +185,18 @@ knitr::kable(tabledf,
 Conclusion goes here
 
 ------------------------------------------------------------------------
+
+\FloatBarrier
+
+```{=tex}
+% This block clears the page and starts the appendix using a custom command in the template.
+\clearpage
+\beginappendix
+```
+# Appendix {.unnumbered}
+
+Here is my appendix.
+
+```{r figure-1-appendix, include=T, echo=FALSE,out.width="100%", fig.align='center', fig.cap="Appendix figure 1"}
+knitr::include_graphics(c("figs/fig1.pdf"))
+```
