@@ -1,8 +1,8 @@
 ---
-title: "ACM Formatted RMarkdown Template for Camera-Ready Submission"
+title: "ACM Formatted RMarkdown Template"
 short-authors: Author 1 \& Author 2
-short-title: Short Paper Title
-subtitle: Best subtitle
+short-title: ACM Formatted RMarkdown Template
+subtitle: for Review, Author, and Camera-Ready Submissions
 subtitlenote: null
 keywords: keyword1, keyword2, keyword3
 
